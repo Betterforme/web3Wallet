@@ -56,7 +56,7 @@ class CurrenciesAdapter(val currencies: MutableList<CurrencyData>) :
         Glide.with(holder.currencyIcon.context).load(data.icon).placeholder(R.drawable.logo)
             .into(holder.currencyIcon)
         holder.currencyName.text = data.name
-        holder.priceTv.text = data.price
+        holder.priceTv.text = "$" + data.price
         holder.balanceTv.text = data.balance
     }
 

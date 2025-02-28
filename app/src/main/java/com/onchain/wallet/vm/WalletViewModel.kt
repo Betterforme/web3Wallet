@@ -32,17 +32,17 @@ class WalletViewModel : BaseViewModel() {
                         CurrencyData(currency.colorful_image_url, currency.name, currency.symbol)
 
                     balanceRatePair.first.find { rate -> currency.symbol == rate.from_currency }
-                        ?.also { rate ->
+                        ?.let { rate ->
                             currencyData.rate = rate.rates.firstOrNull()?.rate ?: "0"
-                        }
+                        } ?: { currencyData.rate = "0" }
                     balanceRatePair.second.find { balance -> currency.symbol == balance.currency }
-                        ?.also { balance ->
+                        ?.let { balance ->
                             currencyData.balance = balance.amount
-                        }
+                        } ?: { currencyData.balance = "0" }
 
                     currencyData.price =
                         BigDecimal(currencyData.balance).multiply(BigDecimal(currencyData.rate))
-                            .setScale(7, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
+                            .setScale(2, RoundingMode.DOWN).stripTrailingZeros().toPlainString()
 
                     currencyTotalBalance =
                         BigDecimal(currencyTotalBalance).plus(BigDecimal(currencyData.price))
