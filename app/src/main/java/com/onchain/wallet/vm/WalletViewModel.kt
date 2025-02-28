@@ -4,11 +4,13 @@ import androidx.lifecycle.viewModelScope
 import com.onchain.wallet.base.BaseViewModel
 import com.onchain.wallet.model.CurrencyData
 import com.onchain.wallet.repo.WalletRepo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -22,7 +24,7 @@ class WalletViewModel : BaseViewModel() {
     val currencyTotalBalance: StateFlow<String> = _currencyTotalBalance
 
     fun getData() {
-        job = viewModelScope.launch {
+        job = viewModelScope.launch (Dispatchers.IO){
             repo.getCurrencies().combine(repo.getRateAndBalance()) { currencies, balanceRatePair ->
                 val currenciesData = mutableListOf<CurrencyData>()
                 var currencyTotalBalance = "0"
@@ -52,8 +54,10 @@ class WalletViewModel : BaseViewModel() {
                 }
                 Pair(currenciesData, currencyTotalBalance)
             }.collect { result ->
-                _currencyData.value = result.first
-                _currencyTotalBalance.value = result.second
+                withContext(Dispatchers.Main){
+                    _currencyData.value = result.first
+                    _currencyTotalBalance.value = result.second
+                }
             }
         }
     }
