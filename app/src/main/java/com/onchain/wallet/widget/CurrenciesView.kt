@@ -1,5 +1,6 @@
 package com.onchain.wallet.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -51,13 +52,14 @@ class CurrenciesAdapter(val currencies: MutableList<CurrencyData>) :
         return CurrenciesVH(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: CurrenciesVH, position: Int) {
         val data = currencies[position]
         Glide.with(holder.currencyIcon.context).load(data.icon).placeholder(R.drawable.logo)
             .into(holder.currencyIcon)
         holder.currencyName.text = data.name
         holder.priceTv.text = "$" + data.price
-        holder.balanceTv.text = data.balance
+        holder.balanceTv.text = data.balance +" "+ data.symbol
     }
 
     override fun getItemCount(): Int {
